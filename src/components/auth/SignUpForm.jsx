@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Input from "../ui/Input.jsx";
 import Button from "../ui/Button.jsx";
@@ -14,6 +14,14 @@ export default function SignUpForm({ onSwitchToSignIn }) {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    return () => clearTimeout(timerRef.current);
+  }, []);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -27,6 +35,8 @@ export default function SignUpForm({ onSwitchToSignIn }) {
       ...previous,
       [name]: "",
     }));
+
+    setSuccess(false);
   };
 
   const validateForm = () => {
@@ -49,7 +59,8 @@ export default function SignUpForm({ onSwitchToSignIn }) {
     if (!formData.password) {
       newErrors.password = "Password is required.";
     } else if (formData.password.length < 6) {
-      newErrors.password = "Password must have at least 6 characters.";
+      newErrors.password =
+        "Password must have at least 6 characters.";
     }
 
     return newErrors;
@@ -58,6 +69,10 @@ export default function SignUpForm({ onSwitchToSignIn }) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    if (loading) return;
+
+    setSuccess(false);
+
     const validationErrors = validateForm();
     setErrors(validationErrors);
 
@@ -65,11 +80,18 @@ export default function SignUpForm({ onSwitchToSignIn }) {
       return;
     }
 
-    // Não exibimos a senha no console.
-    console.log("Cadastro validado com sucesso:", {
-      name: formData.name.trim(),
-      email: formData.email.trim(),
-    });
+    setLoading(true);
+
+    // Simulação de cadastro, sem backend.
+    timerRef.current = setTimeout(() => {
+      console.log("Cadastro validado:", {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+      });
+
+      setLoading(false);
+      setSuccess(true);
+    }, 1200);
   };
 
   return (
@@ -119,7 +141,18 @@ export default function SignUpForm({ onSwitchToSignIn }) {
           error={errors.password}
         />
 
-        <Button type="submit">Sign Up</Button>
+        <Button type="submit" loading={loading}>
+          Sign Up
+        </Button>
+
+        {success && (
+          <p
+            role="status"
+            className="rounded-xl border border-green-500/30 bg-green-500/10 p-3 text-center text-sm text-green-400"
+          >
+            Form validated successfully! (Demo only)
+          </p>
+        )}
       </form>
 
       <AuthDivider />
@@ -131,7 +164,8 @@ export default function SignUpForm({ onSwitchToSignIn }) {
           <button
             type="button"
             onClick={onSwitchToSignIn}
-            className="font-semibold text-[#FFD60A] hover:text-[#FFE34D]"
+            disabled={loading}
+            className="font-semibold text-[#FFD60A] hover:text-[#FFE34D] disabled:opacity-50"
           >
             Sign In
           </button>
