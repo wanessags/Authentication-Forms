@@ -1,17 +1,40 @@
 
+import { useState } from "react";
+
 import Input from "../ui/Input.jsx";
 import Button from "../ui/Button.jsx";
 import AuthDivider from "./AuthDivider.jsx";
 import SocialLogin from "./SocialLogin.jsx";
 
 export default function SignInForm({ onSwitchToSignUp }) {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [rememberMe, setRememberMe] = useState(false);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setFormData((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    // Temporário: não exibir a senha no console.
+    console.log("Formulário de login enviado", {
+      email: formData.email,
+      rememberMe,
+    });
   };
 
   return (
     <section className="flex w-full flex-col gap-[18px]">
-      {/* Cabeçalho */}
       <header className="space-y-2">
         <h1 className="text-[30px] font-bold tracking-tight text-[#FFD60A]">
           Welcome Back
@@ -22,7 +45,6 @@ export default function SignInForm({ onSwitchToSignUp }) {
         </p>
       </header>
 
-      {/* Formulário */}
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-[18px]"
@@ -32,6 +54,8 @@ export default function SignInForm({ onSwitchToSignUp }) {
           name="email"
           type="email"
           placeholder="you@example.com"
+          value={formData.email}
+          onChange={handleChange}
         />
 
         <Input
@@ -39,13 +63,18 @@ export default function SignInForm({ onSwitchToSignUp }) {
           name="password"
           type="password"
           placeholder="••••••••"
+          value={formData.password}
+          onChange={handleChange}
         />
 
-        {/* Lembrar senha e recuperação */}
         <div className="flex items-center justify-between gap-3">
           <label className="flex cursor-pointer items-center gap-2 text-xs text-slate-400">
             <input
               type="checkbox"
+              checked={rememberMe}
+              onChange={(event) =>
+                setRememberMe(event.target.checked)
+              }
               className="h-4 w-4 cursor-pointer accent-[#FFD60A]"
             />
             Remember me
@@ -63,11 +92,9 @@ export default function SignInForm({ onSwitchToSignUp }) {
         <Button type="submit">Sign In</Button>
       </form>
 
-      {/* Login social */}
       <AuthDivider />
       <SocialLogin />
 
-      {/* Alternar para cadastro */}
       <footer className="text-center">
         <p className="text-xs text-slate-400">
           Don't have an account?{" "}
