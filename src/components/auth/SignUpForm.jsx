@@ -13,6 +13,8 @@ export default function SignUpForm({ onSwitchToSignIn }) {
     password: "",
   });
 
+  const [errors, setErrors] = useState({});
+
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -20,21 +22,58 @@ export default function SignUpForm({ onSwitchToSignIn }) {
       ...previous,
       [name]: value,
     }));
+
+    setErrors((previous) => ({
+      ...previous,
+      [name]: "",
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Full name is required.";
+    } else if (formData.name.trim().length < 3) {
+      newErrors.name = "Name must have at least 3 characters.";
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required.";
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())
+    ) {
+      newErrors.email = "Please enter a valid email.";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required.";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must have at least 6 characters.";
+    }
+
+    return newErrors;
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    const validationErrors = validateForm();
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
+
     // Não exibimos a senha no console.
-    console.log("Formulário de cadastro enviado", {
-      name: formData.name,
-      email: formData.email,
+    console.log("Cadastro validado com sucesso:", {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
     });
   };
 
   return (
     <section className="flex w-full flex-col gap-[18px]">
-      {/* Cabeçalho */}
       <header className="space-y-2">
         <h1 className="text-[30px] font-bold tracking-tight text-[#FFD60A]">
           Create an Account
@@ -45,8 +84,8 @@ export default function SignUpForm({ onSwitchToSignIn }) {
         </p>
       </header>
 
-      {/* Formulário */}
       <form
+        noValidate
         onSubmit={handleSubmit}
         className="flex flex-col gap-[18px]"
       >
@@ -57,6 +96,7 @@ export default function SignUpForm({ onSwitchToSignIn }) {
           placeholder="Enter your full name"
           value={formData.name}
           onChange={handleChange}
+          error={errors.name}
         />
 
         <Input
@@ -66,6 +106,7 @@ export default function SignUpForm({ onSwitchToSignIn }) {
           placeholder="you@example.com"
           value={formData.email}
           onChange={handleChange}
+          error={errors.email}
         />
 
         <Input
@@ -75,27 +116,22 @@ export default function SignUpForm({ onSwitchToSignIn }) {
           placeholder="Create a password"
           value={formData.password}
           onChange={handleChange}
+          error={errors.password}
         />
 
-        <Button type="submit">
-          Sign Up
-        </Button>
+        <Button type="submit">Sign Up</Button>
       </form>
 
-      {/* Separador */}
       <AuthDivider />
-
-      {/* Botões sociais */}
       <SocialLogin />
 
-      {/* Voltar ao login */}
       <footer className="text-center">
         <p className="text-xs text-slate-400">
           Already have an account?{" "}
           <button
             type="button"
             onClick={onSwitchToSignIn}
-            className="font-semibold text-[#FFD60A] transition hover:text-[#FFE34D]"
+            className="font-semibold text-[#FFD60A] hover:text-[#FFE34D]"
           >
             Sign In
           </button>
