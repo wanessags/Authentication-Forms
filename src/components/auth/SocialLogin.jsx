@@ -1,5 +1,5 @@
 
-import SocialButton from "../ui/SocialButton";
+import SocialButton from "../ui/SocialButton.jsx";
 
 export default function SocialLogin() {
   const providers = [
@@ -13,14 +13,18 @@ export default function SocialLogin() {
   };
 
   return (
-    <div>
+    <div className="flex w-full items-center justify-center gap-[14px]">
       {providers.map((provider) => (
         <SocialButton
           key={provider.name}
           provider={provider.name}
           onClick={() => handleSocialLogin(provider.name)}
         >
-          {provider.name === "Apple" ? "Apple" : provider.symbol}
+          {provider.name === "Apple" ? (
+            <span className="text-xs font-medium">Apple</span>
+          ) : (
+            provider.symbol
+          )}
         </SocialButton>
       ))}
     </div>
