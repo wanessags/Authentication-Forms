@@ -1,12 +1,35 @@
 
+import { useState } from "react";
+
 import Input from "../ui/Input.jsx";
 import Button from "../ui/Button.jsx";
 import AuthDivider from "./AuthDivider.jsx";
 import SocialLogin from "./SocialLogin.jsx";
 
 export default function SignUpForm({ onSwitchToSignIn }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setFormData((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    // Não exibimos a senha no console.
+    console.log("Formulário de cadastro enviado", {
+      name: formData.name,
+      email: formData.email,
+    });
   };
 
   return (
@@ -22,7 +45,7 @@ export default function SignUpForm({ onSwitchToSignIn }) {
         </p>
       </header>
 
-      {/* Formulário de cadastro */}
+      {/* Formulário */}
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-[18px]"
@@ -32,6 +55,8 @@ export default function SignUpForm({ onSwitchToSignIn }) {
           name="name"
           type="text"
           placeholder="Enter your full name"
+          value={formData.name}
+          onChange={handleChange}
         />
 
         <Input
@@ -39,6 +64,8 @@ export default function SignUpForm({ onSwitchToSignIn }) {
           name="email"
           type="email"
           placeholder="you@example.com"
+          value={formData.email}
+          onChange={handleChange}
         />
 
         <Input
@@ -46,6 +73,8 @@ export default function SignUpForm({ onSwitchToSignIn }) {
           name="password"
           type="password"
           placeholder="Create a password"
+          value={formData.password}
+          onChange={handleChange}
         />
 
         <Button type="submit">
@@ -56,7 +85,7 @@ export default function SignUpForm({ onSwitchToSignIn }) {
       {/* Separador */}
       <AuthDivider />
 
-      {/* Login social */}
+      {/* Botões sociais */}
       <SocialLogin />
 
       {/* Voltar ao login */}
