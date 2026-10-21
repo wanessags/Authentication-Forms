@@ -1,32 +1,45 @@
 
+import { FaGoogle, FaFacebookF, FaApple } from "react-icons/fa";
 import SocialButton from "../ui/SocialButton.jsx";
 
 export default function SocialLogin() {
   const providers = [
-    { name: "Google", symbol: "G" },
-    { name: "Facebook", symbol: "f" },
-    { name: "Apple", symbol: "" },
+    {
+      name: "Google",
+      icon: FaGoogle,
+    },
+    {
+      name: "Facebook",
+      icon: FaFacebookF,
+    },
+    {
+      name: "Apple",
+      icon: FaApple,
+    },
   ];
 
   const handleSocialLogin = (provider) => {
-    console.log(`Login social selecionado: ${provider}`);
+    console.log(`Provedor selecionado: ${provider}`);
   };
 
   return (
     <div className="flex w-full items-center justify-center gap-[14px]">
-      {providers.map((provider) => (
-        <SocialButton
-          key={provider.name}
-          provider={provider.name}
-          onClick={() => handleSocialLogin(provider.name)}
-        >
-          {provider.name === "Apple" ? (
-            <span className="text-xs font-medium">Apple</span>
-          ) : (
-            provider.symbol
-          )}
-        </SocialButton>
-      ))}
+      {providers.map((provider) => {
+        const Icon = provider.icon;
+
+        return (
+          <SocialButton
+            key={provider.name}
+            provider={provider.name}
+            onClick={() => handleSocialLogin(provider.name)}
+          >
+            <Icon
+              size={22}
+              aria-hidden="true"
+            />
+          </SocialButton>
+        );
+      })}
     </div>
   );
 }
