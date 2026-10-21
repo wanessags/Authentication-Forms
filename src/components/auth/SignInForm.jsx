@@ -13,6 +13,7 @@ export default function SignInForm({ onSwitchToSignUp }) {
   });
 
   const [rememberMe, setRememberMe] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -21,14 +22,43 @@ export default function SignInForm({ onSwitchToSignUp }) {
       ...previous,
       [name]: value,
     }));
+
+    setErrors((previous) => ({
+      ...previous,
+      [name]: "",
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      newErrors.email = "Please enter a valid email.";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required.";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must have at least 6 characters.";
+    }
+
+    return newErrors;
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    // Temporário: não exibir a senha no console.
-    console.log("Formulário de login enviado", {
-      email: formData.email,
+    const validationErrors = validateForm();
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
+
+    console.log("Login validado com sucesso:", {
+      email: formData.email.trim(),
       rememberMe,
     });
   };
@@ -39,13 +69,13 @@ export default function SignInForm({ onSwitchToSignUp }) {
         <h1 className="text-[30px] font-bold tracking-tight text-[#FFD60A]">
           Welcome Back
         </h1>
-
         <p className="text-sm text-slate-400">
           Sign in to continue your journey
         </p>
       </header>
 
       <form
+        noValidate
         onSubmit={handleSubmit}
         className="flex flex-col gap-[18px]"
       >
@@ -56,6 +86,7 @@ export default function SignInForm({ onSwitchToSignUp }) {
           placeholder="you@example.com"
           value={formData.email}
           onChange={handleChange}
+          error={errors.email}
         />
 
         <Input
@@ -65,6 +96,7 @@ export default function SignInForm({ onSwitchToSignUp }) {
           placeholder="••••••••"
           value={formData.password}
           onChange={handleChange}
+          error={errors.password}
         />
 
         <div className="flex items-center justify-between gap-3">
@@ -72,9 +104,7 @@ export default function SignInForm({ onSwitchToSignUp }) {
             <input
               type="checkbox"
               checked={rememberMe}
-              onChange={(event) =>
-                setRememberMe(event.target.checked)
-              }
+              onChange={(event) => setRememberMe(event.target.checked)}
               className="h-4 w-4 cursor-pointer accent-[#FFD60A]"
             />
             Remember me
@@ -83,7 +113,7 @@ export default function SignInForm({ onSwitchToSignUp }) {
           <a
             href="#forgot-password"
             onClick={(event) => event.preventDefault()}
-            className="text-xs font-medium text-[#FFD60A] transition hover:text-[#FFE34D]"
+            className="text-xs font-medium text-[#FFD60A] hover:text-[#FFE34D]"
           >
             Forgot password?
           </a>
@@ -101,7 +131,7 @@ export default function SignInForm({ onSwitchToSignUp }) {
           <button
             type="button"
             onClick={onSwitchToSignUp}
-            className="font-semibold text-[#FFD60A] transition hover:text-[#FFE34D]"
+            className="font-semibold text-[#FFD60A] hover:text-[#FFE34D]"
           >
             Sign Up
           </button>
