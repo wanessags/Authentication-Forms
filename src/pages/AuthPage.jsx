@@ -1,7 +1,7 @@
 
-import BackgroundEffects from "../components/layout/BackgroundEffects";
-import AuthBadge from "../components/ui/AuthBadge";
-import SignInForm from "../components/auth/SignInForm";
+import BackgroundEffects from "../components/layout/BackgroundEffects.jsx";
+import AuthBadge from "../components/ui/AuthBadge.jsx";
+import SignInForm from "../components/auth/SignInForm.jsx";
 
 export default function AuthPage() {
   return (
@@ -10,7 +10,6 @@ export default function AuthPage() {
 
       <header>
         <AuthBadge />
-
         <span>SIGN IN</span>
       </header>
 
