@@ -96,16 +96,18 @@ export default function SignUpForm({ onSwitchToSignIn }) {
 
   return (
     <section className="flex w-full flex-col gap-[18px]">
+      {/* Cabeçalho */}
       <header className="space-y-2">
         <h1 className="text-[30px] font-bold tracking-tight text-[#FFD60A]">
-          Create an Account
+          Create Account
         </h1>
 
         <p className="text-sm text-slate-400">
-          Join us today! Enter your details to get started.
+          Join our community today
         </p>
       </header>
 
+      {/* Formulário de cadastro */}
       <form
         noValidate
         onSubmit={handleSubmit}
@@ -115,7 +117,7 @@ export default function SignUpForm({ onSwitchToSignIn }) {
           label="Full Name"
           name="name"
           type="text"
-          placeholder="Enter your full name"
+          placeholder="Your full name"
           value={formData.name}
           onChange={handleChange}
           error={errors.name}
@@ -135,16 +137,17 @@ export default function SignUpForm({ onSwitchToSignIn }) {
           label="Password"
           name="password"
           type="password"
-          placeholder="Create a password"
+          placeholder="••••••••"
           value={formData.password}
           onChange={handleChange}
           error={errors.password}
         />
 
         <Button type="submit" loading={loading}>
-          Sign Up
+          Create Account
         </Button>
 
+        {/* Feedback de cadastro */}
         {success && (
           <p
             role="status"
@@ -155,9 +158,13 @@ export default function SignUpForm({ onSwitchToSignIn }) {
         )}
       </form>
 
+      {/* Separador */}
       <AuthDivider />
+
+      {/* Botões sociais */}
       <SocialLogin />
 
+      {/* Alternar para login */}
       <footer className="text-center">
         <p className="text-xs text-slate-400">
           Already have an account?{" "}
@@ -165,7 +172,7 @@ export default function SignUpForm({ onSwitchToSignIn }) {
             type="button"
             onClick={onSwitchToSignIn}
             disabled={loading}
-            className="font-semibold text-[#FFD60A] hover:text-[#FFE34D] disabled:opacity-50"
+            className="font-semibold text-[#FFD60A] transition hover:text-[#FFE34D] disabled:opacity-50"
           >
             Sign In
           </button>
