@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Input from "../ui/Input.jsx";
 import Button from "../ui/Button.jsx";
@@ -14,6 +14,14 @@ export default function SignInForm({ onSwitchToSignUp }) {
 
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    return () => clearTimeout(timerRef.current);
+  }, []);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -27,6 +35,8 @@ export default function SignInForm({ onSwitchToSignUp }) {
       ...previous,
       [name]: "",
     }));
+
+    setSuccess(false);
   };
 
   const validateForm = () => {
@@ -34,14 +44,17 @@ export default function SignInForm({ onSwitchToSignUp }) {
 
     if (!formData.email.trim()) {
       newErrors.email = "Email is required.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())
+    ) {
       newErrors.email = "Please enter a valid email.";
     }
 
     if (!formData.password) {
       newErrors.password = "Password is required.";
     } else if (formData.password.length < 6) {
-      newErrors.password = "Password must have at least 6 characters.";
+      newErrors.password =
+        "Password must have at least 6 characters.";
     }
 
     return newErrors;
@@ -50,6 +63,10 @@ export default function SignInForm({ onSwitchToSignUp }) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    if (loading) return;
+
+    setSuccess(false);
+
     const validationErrors = validateForm();
     setErrors(validationErrors);
 
@@ -57,10 +74,18 @@ export default function SignInForm({ onSwitchToSignUp }) {
       return;
     }
 
-    console.log("Login validado com sucesso:", {
-      email: formData.email.trim(),
-      rememberMe,
-    });
+    setLoading(true);
+
+    // Simulação de processamento, sem backend.
+    timerRef.current = setTimeout(() => {
+      console.log("Login validado:", {
+        email: formData.email.trim(),
+        rememberMe,
+      });
+
+      setLoading(false);
+      setSuccess(true);
+    }, 1200);
   };
 
   return (
@@ -69,6 +94,7 @@ export default function SignInForm({ onSwitchToSignUp }) {
         <h1 className="text-[30px] font-bold tracking-tight text-[#FFD60A]">
           Welcome Back
         </h1>
+
         <p className="text-sm text-slate-400">
           Sign in to continue your journey
         </p>
@@ -104,7 +130,9 @@ export default function SignInForm({ onSwitchToSignUp }) {
             <input
               type="checkbox"
               checked={rememberMe}
-              onChange={(event) => setRememberMe(event.target.checked)}
+              onChange={(event) =>
+                setRememberMe(event.target.checked)
+              }
               className="h-4 w-4 cursor-pointer accent-[#FFD60A]"
             />
             Remember me
@@ -119,7 +147,18 @@ export default function SignInForm({ onSwitchToSignUp }) {
           </a>
         </div>
 
-        <Button type="submit">Sign In</Button>
+        <Button type="submit" loading={loading}>
+          Sign In
+        </Button>
+
+        {success && (
+          <p
+            role="status"
+            className="rounded-xl border border-green-500/30 bg-green-500/10 p-3 text-center text-sm text-green-400"
+          >
+            Form validated successfully! (Demo only)
+          </p>
+        )}
       </form>
 
       <AuthDivider />
@@ -131,7 +170,8 @@ export default function SignInForm({ onSwitchToSignUp }) {
           <button
             type="button"
             onClick={onSwitchToSignUp}
-            className="font-semibold text-[#FFD60A] hover:text-[#FFE34D]"
+            disabled={loading}
+            className="font-semibold text-[#FFD60A] hover:text-[#FFE34D] disabled:opacity-50"
           >
             Sign Up
           </button>
